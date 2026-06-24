@@ -1,0 +1,18 @@
+# Credenciais e ambiente
+.env
+venv/
+__pycache__/
+*.pyc
+
+# Dados brutos (arquivo grande, não versionar)
+data/raw/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Logs
+logs/
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db

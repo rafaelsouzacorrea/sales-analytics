@@ -1,0 +1,11 @@
+rank,produto,clientes,receita_total,margem_pct,desconto_medio_pct
+1,ContactMatcher,99,410378.45,3.05,35.31
+2,FinanceHub,99,340935.43,9.43,13.25
+3,Site Analytics,99,330007.1,13.49,15.46
+4,Marketing Suite - Gold,99,223843.59,9.51,7.47
+5,Big Ol Database,62,189238.68,1.79,30.61
+6,Data Smasher,97,167380.31,25.05,7.85
+7,Alchemy,49,149528.01,37.2,16.18
+8,Support,98,125152.76,26.26,7.51
+9,Marketing Suite,89,114880.05,-3.02,21.11
+10,OneView,97,107532.14,16.87,16.65

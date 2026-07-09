@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+from urllib.parse import quote_plus
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -15,6 +16,11 @@ load_dotenv()
 
 LOG_DIR = Path("logs")
 LOG_DIR.mkdir(exist_ok=True)
+
+# O console do Windows usa cp1252 por padrao e nao suporta certos
+# caracteres que podiam aparecer nos logs, o que quebrava o StreamHandler.
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 logging.basicConfig(
     level=logging.INFO,
@@ -48,7 +54,7 @@ def conectar():
     user     = os.getenv("DB_USER",     "postgres")
     password = os.getenv("DB_PASSWORD", "")
 
-    url = f"postgresql://{user}:{password}@{host}:{port}/{database}"
+    url = f"postgresql://{user}:{quote_plus(password)}@{host}:{port}/{database}"
 
     try:
         engine = create_engine(url, pool_pre_ping=True)
@@ -65,7 +71,7 @@ def conectar():
 
 def rodar(engine, sql: str, titulo: str) -> pd.DataFrame:
     """ Executa uma query SQL e retorna um DataFrame. """
-    separador = "─" * 55
+    separador = "-" * 55
     log.info(separador)
     log.info("  %s", titulo)
     log.info(separador)
@@ -77,7 +83,7 @@ def rodar(engine, sql: str, titulo: str) -> pd.DataFrame:
         raise
 
     log.info("\n%s", df.to_string(index=False))
-    log.info("  → %d linha(s) retornada(s)\n", len(df))
+    log.info("  -> %d linha(s) retornada(s)\n", len(df))
     return df
 
 

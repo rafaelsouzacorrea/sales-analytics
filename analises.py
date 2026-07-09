@@ -5,11 +5,11 @@ Calcula KPIs de SaaS a partir do CSV gerado pelo ETL
 e produz gráficos para o portfólio.
 
 KPIs calculados:
-  MRR   Monthly Recurring Revenue  → receita total do mês
-  ARR   Annual Recurring Revenue   → MRR × 12
-  ARPU  Avg Revenue Per User       → MRR ÷ clientes ativos
-  Churn Taxa de saída de clientes  → % que não voltaram no mês seguinte
-  LTV   Customer Lifetime Value    → ARPU ÷ Churn Rate
+  MRR   Monthly Recurring Revenue  - receita total do mês
+  ARR   Annual Recurring Revenue   - MRR × 12
+  ARPU  Avg Revenue Per User       - MRR ÷ clientes ativos
+  Churn Taxa de saída de clientes  - % que não voltaram no mês seguinte
+  LTV   Customer Lifetime Value    - ARPU ÷ Churn Rate
 """
 
 import logging
@@ -310,8 +310,7 @@ def grafico_mrr(mrr_df: pd.DataFrame) -> None:
     caminho = PASTA_GRAFICOS / "mrr_mensal.png"
     plt.savefig(caminho, dpi=150)
     log.info("  Salvo em %s", caminho)
-    plt.show()
-    plt.close(fig) 
+    plt.close(fig)
 
 
 def grafico_segmentos(seg_df: pd.DataFrame) -> None:
@@ -345,7 +344,6 @@ def grafico_segmentos(seg_df: pd.DataFrame) -> None:
     caminho = PASTA_GRAFICOS / "segmentos.png"
     plt.savefig(caminho, dpi=150)
     log.info("  Salvo em %s", caminho)
-    plt.show()
     plt.close(fig)
 
 

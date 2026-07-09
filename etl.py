@@ -10,7 +10,7 @@ Fluxo:
 
 
 Pré-requisitos:
-    pip install pandas sqlalchemy psycopg2-binary python-dotenv
+    pip install -r requirements.txt
     Arquivo .env com as variáveis de banco
 """
 
@@ -23,6 +23,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
+from urllib.parse import quote_plus
 
 
 load_dotenv()
@@ -33,6 +34,11 @@ ARQUIVO_LIMPO = Path("data/processed/saas_limpo.csv")
 #Logging
 LOG_DIR = Path("logs")
 LOG_DIR.mkdir(exist_ok=True)
+
+# O console do Windows usa cp1252 por padrao e nao suporta certos
+# caracteres que podiam aparecer nos logs, o que quebrava o StreamHandler.
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 logging.basicConfig(
     level=logging.INFO,
@@ -77,10 +83,9 @@ def criar_engine():
     database = os.getenv("DB_NAME",     "saas_analytics")
     user     = os.getenv("DB_USER",     "postgres")
     password = os.getenv("DB_PASSWORD", "")
-
   
     url = (
-        f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}"
+        f"postgresql+psycopg2://{user}:{quote_plus(password)}@{host}:{port}/{database}"
     )
 
     try:
@@ -199,13 +204,13 @@ def salvar(df: pd.DataFrame, caminho_csv: Path) -> None:
         with engine.begin() as conn:
             conn.execute(text("TRUNCATE TABLE vendas RESTART IDENTITY"))
             log.info("  Tabela 'vendas' truncada")
-        df.to_sql(
-            "vendas",
-            engine,
-            if_exists="append", 
-            index=False,
-            chunksize=1000, 
-        )
+            df.to_sql(
+                "vendas",
+                conn,
+                if_exists="append",
+                index=False,
+                chunksize=1000,
+            )
         log.info("  Tabela 'vendas' carregada no PostgreSQL (%d linhas)", len(df))
 
       
@@ -255,7 +260,7 @@ def main() -> None:
 
     log.info("")
     log.info("Resumo dos dados carregados:")
-    log.info("  Período      : %s → %s",
+    log.info("  Período      : %s -> %s",
              df_limpo["order_date"].min().date(),
              df_limpo["order_date"].max().date())
     log.info("  Transações   : %d", len(df_limpo))
